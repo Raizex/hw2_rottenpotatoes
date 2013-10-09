@@ -4,9 +4,11 @@
 %table#movies
   %thead
     %tr
-      %th= link_to 'Movie Title', movies_path(:order => :title)
+      - haml_tag :th, class: "#{'hilite' if params[:order]=='title'}" do
+        - haml_concat link_to 'Movie Title', movies_path(:order => :title)
       %th Rating
-      %th= link_to 'Release Date', movies_path(:order => :release_date)
+      - haml_tag :th, class: "#{'hilite' if params[:order]=='release_date'}" do
+        - haml_concat link_to 'Release Date', movies_path(:order => :release_date)
       %th More Info
   %tbody
     - @movies.each do |movie|
