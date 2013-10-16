@@ -8,7 +8,19 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
-    params[:ratings].nil? ? @ratings = @all_ratings : @ratings = params[:ratings].keys
+
+    if params[:ratings]
+      session[:ratings] = params[:ratings]
+      @ratings = params[:ratings].keys
+    elsif session[:ratings]
+      params[:ratings] = session[:ratings]
+      flash.keep
+      redirect_to movies_path(params)
+    else
+      @ratings = @all_ratings
+    end
+
+    
     @movies = Movie.where(:rating => @ratings).order(params[:order])
   end
 
