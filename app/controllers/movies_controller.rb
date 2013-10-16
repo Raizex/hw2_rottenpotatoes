@@ -7,18 +7,46 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.all_ratings
+    
 
-    if params[:ratings]
-      session[:ratings] = params[:ratings]
-      @ratings = params[:ratings].keys
-    elsif session[:ratings]
+    if params[:ratings] != session[:ratings] || params[:order] != session[:order]
+      session.merge!(params) # update session
+      params[:order] = session[:order]  # reconstruct params to reflect updated session
       params[:ratings] = session[:ratings]
       flash.keep
-      redirect_to movies_path(params)
-    else
-      @ratings = @all_ratings
+      redirect_to movies_path(params) # redirect using new parameters
     end
+
+    @all_ratings = Movie.all_ratings
+    params[:ratings].nil? ? @ratings = @all_ratings : @ratings = params[:ratings].keys
+    @movies = Movie.where(:rating => @ratings).order(params[:order])
+
+    # if params[:ratings] && params[:order]
+    #   session[:ratings] = params[:ratings]
+    #   @ratings = params[:ratings].keys
+
+    #   session[:order] = params[:order]
+    #   order = params[:order]
+    # elsif session[:ratings] && session[:order]
+    #   params[:ratings] = session[:ratings]
+    #   flash.keep
+    #   redirect_to movies_path(params)
+    # else
+    #   @ratings = @all_ratings
+    # end
+
+    # if params[:order]
+    #   session[:order] = params[:order]
+    #   order = params[:order]
+    # elsif session[:order]
+    #   params[:order] = session[:order]
+    #   flash.keep
+    #   redirect_to movies_path(params)
+    # else
+    #   order = nil
+    # end
+
+        
 
     
     @movies = Movie.where(:rating => @ratings).order(params[:order])
